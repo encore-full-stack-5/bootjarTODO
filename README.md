@@ -1,3 +1,21 @@
+## :open_file_folder: Project Structure
+
+```markdown
+src
+├── common
+│   ├── config
+│   ├── types
+│   └── utils
+│       ├── types
+│       └── utils
+├── controller
+├── entity
+├── infrastructure
+│   ├── express
+│   └── typeorm
+├── repository
+└── ser
+```
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
 </p>
