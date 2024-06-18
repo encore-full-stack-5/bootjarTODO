@@ -10,7 +10,9 @@ export class DropTodosHandler implements IEventHandler<DropTodosEvent> {
     private readonly client: Redis,
   ) {}
 
-  async execute(event: DropTodosEvent) {
+  async handle(event: DropTodosEvent) {
     const { userId, date } = event;
+    const redisKey = `todos:${userId}:${date}`;
+    await this.client.del(redisKey);
   }
 }

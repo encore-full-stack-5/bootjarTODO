@@ -7,10 +7,16 @@ import { RedisModule } from '@nestjs-modules/ioredis';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CommandHandlers } from './commands/handlers';
 import { QueryHandlers } from './queries/handlers';
+import { EventHandlers } from './events/handlers';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Todo]), RedisModule, CqrsModule],
   controllers: [TodosController],
-  providers: [TodosService, ...QueryHandlers, ...CommandHandlers],
+  providers: [
+    TodosService,
+    ...QueryHandlers,
+    ...CommandHandlers,
+    ...EventHandlers,
+  ],
 })
 export class TodosModule {}

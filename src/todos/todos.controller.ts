@@ -4,6 +4,7 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetTodosQuery } from './queries/impl/get-todos.query';
+import { CreateTodoCommand } from './commands/impl/create-todo.command';
 
 @Controller('todos')
 export class TodosController {
@@ -22,6 +23,9 @@ export class TodosController {
   @Post()
   create(@Body() createTodoDto: CreateTodoDto) {
     const userId = 1;
-    return this.todosService.create(userId, createTodoDto);
+    return this.commandBus.execute(
+      new CreateTodoCommand(userId, createTodoDto),
+    );
+    // return this.todosService.create(userId, createTodoDto);
   }
 }

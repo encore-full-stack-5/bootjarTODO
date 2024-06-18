@@ -7,9 +7,10 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { Category } from './category.entity';
+import { AggregateRoot } from '@nestjs/cqrs';
 
 @Entity('todos')
-export class Todo {
+export class Todo extends AggregateRoot {
   @PrimaryGeneratedColumn({ name: 'todo_id' })
   todoId: number;
 
