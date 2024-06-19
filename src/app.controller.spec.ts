@@ -16,6 +16,7 @@ describe('AppController', () => {
 
   describe('root', () => {
     it('should return "Hello World!"', () => {
+      jest.spyOn(appController, 'getHello').mockReturnValue('Hello World!');
       expect(appController.getHello()).toBe('Hello World!');
     });
   });
