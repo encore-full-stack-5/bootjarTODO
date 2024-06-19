@@ -2,6 +2,7 @@ import { TodosService } from './todos.service';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -15,12 +16,12 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetTodosQuery } from './queries/impl/get-todos.query';
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { Response } from 'express';
-import { Todo } from './entities/todos.entity';
 import { GetTodosDto } from './dto/get-todos.dto';
 import { GetTodoQuery } from './queries/impl/get-todo.query';
 import { GetTodoDto } from './dto/get-todo.dto';
-import { UpdateTodoCommand } from "./commands/impl/update-todo.command";
-import { UpdateTodoDto } from "./dto/update-todo.dto";
+import { UpdateTodoCommand } from './commands/impl/update-todo.command';
+import { UpdateTodoDto } from './dto/update-todo.dto';
+import { DeleteTodoCommand } from './commands/impl/delete-todo.command';
 
 @Controller('todos')
 export class TodosController {
@@ -84,5 +85,14 @@ export class TodosController {
     await this.commandBus.execute(new UpdateTodoCommand(todoId, updateTodoDto));
     res.status(HttpStatus.OK);
     return { message: 'TO-DO 수정 성공' };
+  }
+  @Delete('/:todoId')
+  async delete(
+    @Param('todoId') todoId: number,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.commandBus.execute(new DeleteTodoCommand(todoId));
+    res.status(HttpStatus.OK);
+    return { message: 'TO-DO 삭제 성공' };
   }
 }
