@@ -1,10 +1,10 @@
 import { TodosService } from './todos.service';
-// import { CreateTodoDto, UpdateTodoDto } from './dto';
 import {
   Body,
   Controller,
   Get,
   HttpStatus,
+  Param,
   Post,
   Query,
   Res,
@@ -33,8 +33,20 @@ export class TodosController {
     const todos: Todo[] = await this.queryBus.execute(
       new GetTodosQuery(userId, date),
     );
-    res.status(HttpStatus.OK).json({ todos: todos });
-    // return this.todosService.findAll(userId, date);
+    res.status(HttpStatus.OK);
+    return { todos };
+  }
+  @Get('/friends/:friendId')
+  async findFriendTodos(
+    @Param('friendId') friendId: number,
+    @Query('query') date: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const todos: Todo[] = await this.queryBus.execute(
+      new GetTodosQuery(friendId, date),
+    );
+    res.status(HttpStatus.OK); // body를 리턴으로 안주고 .json()으로 던져주면 여러번 응답 요청이 왔을때 에러남
+    return { todos };
   }
   @Post()
   async create(
@@ -43,7 +55,7 @@ export class TodosController {
   ) {
     const userId = 1;
     await this.commandBus.execute(new CreateTodoCommand(userId, createTodoDto));
-    res.status(HttpStatus.CREATED).json({ message: 'TO-DO 등록 성공' });
-    // return this.todosService.create(userId, createTodoDto);
+    res.status(HttpStatus.CREATED);
+    return { message: 'TO-DO 등록 성공' };
   }
 }
