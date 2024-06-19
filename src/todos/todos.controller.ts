@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Res,
 } from '@nestjs/common';
@@ -15,9 +16,11 @@ import { GetTodosQuery } from './queries/impl/get-todos.query';
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { Response } from 'express';
 import { Todo } from './entities/todos.entity';
-import { GetTodosDto } from "./dto/get-todos.dto";
-import { GetTodoQuery } from "./queries/impl/get-todo.query";
-import { GetTodoDto } from "./dto/get-todo.dto";
+import { GetTodosDto } from './dto/get-todos.dto';
+import { GetTodoQuery } from './queries/impl/get-todo.query';
+import { GetTodoDto } from './dto/get-todo.dto';
+import { UpdateTodoCommand } from "./commands/impl/update-todo.command";
+import { UpdateTodoDto } from "./dto/update-todo.dto";
 
 @Controller('todos')
 export class TodosController {
@@ -71,5 +74,15 @@ export class TodosController {
     await this.commandBus.execute(new CreateTodoCommand(userId, createTodoDto));
     res.status(HttpStatus.CREATED);
     return { message: 'TO-DO 등록 성공' };
+  }
+  @Put('/:todoId')
+  async update(
+    @Param('todoId') todoId: number,
+    @Body() updateTodoDto: UpdateTodoDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    await this.commandBus.execute(new UpdateTodoCommand(todoId, updateTodoDto));
+    res.status(HttpStatus.OK);
+    return { message: 'TO-DO 수정 성공' };
   }
 }
