@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { Todo } from '../../entities/todos.entity';
 import { DropTodosEvent } from '../../events/impl/drop-todos.event';
 import { UpdateTodoCommand } from '../impl/update-todo.command';
+import { DropTodoEvent } from "../../events/impl/drop-todo.event";
 
 @CommandHandler(UpdateTodoCommand)
 export class UpdateTodoHandler implements ICommandHandler<UpdateTodoCommand> {
@@ -26,6 +27,7 @@ export class UpdateTodoHandler implements ICommandHandler<UpdateTodoCommand> {
 
     const result = await this.todoRepository.save(todo);
     this.eventBus.publish(new DropTodosEvent(todo.userId, beforeDate));
+    this.eventBus.publish(new DropTodoEvent(todo.todoId));
 
     return result;
   }
