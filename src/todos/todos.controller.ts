@@ -25,20 +25,25 @@ export class TodosController {
   ) {}
 
   @Get('me')
-  async findMyTodos(@Query('query') date: string, @Res() res: Response) {
+  async findMyTodos(
+    @Query('query') date: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const userId = 1;
     const todos: Todo[] = await this.queryBus.execute(
       new GetTodosQuery(userId, date),
     );
-    res.status(HttpStatus.OK).json({ todos: todos }).send();
+    res.status(HttpStatus.OK).json({ todos: todos });
     // return this.todosService.findAll(userId, date);
   }
   @Post()
-  create(@Body() createTodoDto: CreateTodoDto) {
+  async create(
+    @Body() createTodoDto: CreateTodoDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const userId = 1;
-    return this.commandBus.execute(
-      new CreateTodoCommand(userId, createTodoDto),
-    );
+    await this.commandBus.execute(new CreateTodoCommand(userId, createTodoDto));
+    res.status(HttpStatus.CREATED).json({ message: 'TO-DO 등록 성공' });
     // return this.todosService.create(userId, createTodoDto);
   }
 }
