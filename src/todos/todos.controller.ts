@@ -15,6 +15,7 @@ import { GetTodosQuery } from './queries/impl/get-todos.query';
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { Response } from 'express';
 import { Todo } from './entities/todos.entity';
+import { GetTodosDto } from "./dto/get-todos.dto";
 
 @Controller('todos')
 export class TodosController {
@@ -30,7 +31,7 @@ export class TodosController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const userId = 1;
-    const todos: Todo[] = await this.queryBus.execute(
+    const todos: GetTodosDto[] = await this.queryBus.execute(
       new GetTodosQuery(userId, date),
     );
     res.status(HttpStatus.OK);
@@ -42,7 +43,7 @@ export class TodosController {
     @Query('query') date: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const todos: Todo[] = await this.queryBus.execute(
+    const todos: GetTodosDto[] = await this.queryBus.execute(
       new GetTodosQuery(friendId, date),
     );
     res.status(HttpStatus.OK); // body를 리턴으로 안주고 .json()으로 던져주면 여러번 응답 요청이 왔을때 에러남
