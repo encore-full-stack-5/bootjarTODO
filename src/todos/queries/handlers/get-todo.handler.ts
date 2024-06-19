@@ -8,7 +8,7 @@ import Redis from 'ioredis';
 import { GetTodoDto } from '../../dto/get-todo.dto';
 
 @QueryHandler(GetTodoQuery)
-export class GetTodosHandler implements IQueryHandler<GetTodoQuery> {
+export class GetTodoHandler implements IQueryHandler<GetTodoQuery> {
   constructor(
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
