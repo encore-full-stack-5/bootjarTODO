@@ -16,6 +16,8 @@ import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { Response } from 'express';
 import { Todo } from './entities/todos.entity';
 import { GetTodosDto } from "./dto/get-todos.dto";
+import { GetTodoQuery } from "./queries/impl/get-todo.query";
+import { GetTodoDto } from "./dto/get-todo.dto";
 
 @Controller('todos')
 export class TodosController {
@@ -51,15 +53,14 @@ export class TodosController {
   }
   @Get('/:todoId')
   async findTodo(
-    @Param('friendId') friendId: number,
-    @Query('query') date: string,
+    @Param('todoId') todoId: number,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const todos: Todo[] = await this.queryBus.execute(
-      new GetTodosQuery(friendId, date),
+    const todo: GetTodoDto = await this.queryBus.execute(
+      new GetTodoQuery(todoId),
     );
     res.status(HttpStatus.OK);
-    return { todos };
+    return todo;
   }
   @Post()
   async create(
