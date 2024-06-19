@@ -33,6 +33,7 @@ export class GetTodosHandler implements IQueryHandler<GetTodosQuery> {
       .getMany();
     const dtoList = todos.map((todo) => {
       const dto = new GetTodosDto();
+      dto.todoId = todo.todoId;
       dto.categoryId = todo.categoryId;
       dto.todoTitle = todo.todoTitle;
       dto.todoDate = date;
