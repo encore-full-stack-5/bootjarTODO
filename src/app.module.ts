@@ -24,7 +24,7 @@ import { User } from './todos/entities/user.entity';
     }),
     RedisModule.forRoot({
       type: 'single',
-      url: 'redis://localhost:6379',
+      url: process.env.REDIS_URL,
     }),
     TodosModule,
   ],
