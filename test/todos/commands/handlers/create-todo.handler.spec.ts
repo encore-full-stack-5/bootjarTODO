@@ -48,7 +48,6 @@ describe('CreateTodoHandler', () => {
       todoTitle: 'Test Todo',
       todoContent: 'This is a test',
       todoDate: '2024-06-18',
-      toEntity: jest.fn().mockReturnValue(new Todo()),
     };
     const command = new CreateTodoCommand(userId, createTodoDto);
     const savedTodo = new Todo();

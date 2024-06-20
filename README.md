@@ -6,22 +6,32 @@ src
 │   ├── commands
 │   │   ├── handlers
 │   │   │   ├── create-todo.handler.ts
+│   │   │   ├── delete-todo.handler.ts
+│   │   │   ├── update-todo.handler.ts
 │   │   │   └── index.ts
 │   │   └── impl
-│   │       └── create-todo.command.ts
+│   │       ├── create-todo.command.ts
+│   │       ├── delete-todo.command.ts
+│   │       └── update-todo.command.ts
 │   ├── queries
 │   │   ├── handlers
 │   │   │   ├── get-todos.handler.ts
+│   │   │   ├── get-todo.handler.ts
 │   │   │   └── index.ts
 │   │   └── impl
-│   │       └── get-todos.query.ts
+│   │       ├── get-todos.query.ts
+│   │       └── get-todo.query.ts
 │   ├── events
 │   │   ├── handlers
 │   │   │   ├── drop-todos.handler.ts
+│   │   │   ├── drop-todo.handler.ts
 │   │   │   └── index.ts
 │   │   └── impl
-│   │       └── drop-todos.event.ts
+│   │       ├── drop-todos.event.ts
+│   │       └── drop-todo.event.ts
 │   ├── dto
+│   │   ├── get-todos.dto.ts
+│   │   ├── get-todo.dto.ts
 │   │   ├── create-todo.dto.ts
 │   │   └── update-todo.dto.ts
 │   ├── entities
