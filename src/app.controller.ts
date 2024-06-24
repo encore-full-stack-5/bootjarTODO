@@ -9,7 +9,7 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
-  @Get()
+  @Get('todos/api/version')
   getVersion(): string {
     return this.appService.getVersion();
   }
