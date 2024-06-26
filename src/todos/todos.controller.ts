@@ -10,6 +10,8 @@ import {
   Put,
   Query,
   Res,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
@@ -22,6 +24,7 @@ import { GetTodoDto } from './dto/get-todo.dto';
 import { UpdateTodoCommand } from './commands/impl/update-todo.command';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { DeleteTodoCommand } from './commands/impl/delete-todo.command';
+import { AuthGuard } from './auth/auth.guard';
 
 @Controller('todos')
 export class TodosController {
@@ -31,18 +34,20 @@ export class TodosController {
     private readonly queryBus: QueryBus,
   ) {}
 
+  @UseGuards(AuthGuard)
   @Get('me')
   async findMyTodos(
     @Query('query') date: string,
     @Res({ passthrough: true }) res: Response,
+    @Request() req,
   ) {
-    const userId = 1;
     const todos: GetTodosDto[] = await this.queryBus.execute(
-      new GetTodosQuery(userId, date),
+      new GetTodosQuery(req.user.id, date),
     );
     res.status(HttpStatus.OK);
     return { todos };
   }
+  @UseGuards(AuthGuard)
   @Get('/friends/:friendId')
   async findFriendTodos(
     @Param('friendId') friendId: number,
@@ -55,6 +60,7 @@ export class TodosController {
     res.status(HttpStatus.OK); // body를 리턴으로 안주고 .json()으로 던져주면 여러번 응답 요청이 왔을때 에러남
     return { todos };
   }
+  @UseGuards(AuthGuard)
   @Get('/:todoId')
   async findTodo(
     @Param('todoId') todoId: number,
@@ -66,16 +72,18 @@ export class TodosController {
     res.status(HttpStatus.OK);
     return todo;
   }
+  @UseGuards(AuthGuard)
   @Post()
   async create(
     @Body() createTodoDto: CreateTodoDto,
     @Res({ passthrough: true }) res: Response,
+    @Request() req,
   ) {
-    const userId = 1;
-    await this.commandBus.execute(new CreateTodoCommand(userId, createTodoDto));
+    await this.commandBus.execute(new CreateTodoCommand(req.user.id, createTodoDto));
     res.status(HttpStatus.CREATED);
     return { message: 'TO-DO 등록 성공' };
   }
+  @UseGuards(AuthGuard)
   @Put('/:todoId')
   async update(
     @Param('todoId') todoId: number,
@@ -86,6 +94,7 @@ export class TodosController {
     res.status(HttpStatus.OK);
     return { message: 'TO-DO 수정 성공' };
   }
+  @UseGuards(AuthGuard)
   @Delete('/:todoId')
   async delete(
     @Param('todoId') todoId: number,
