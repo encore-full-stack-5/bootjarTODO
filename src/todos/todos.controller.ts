@@ -79,7 +79,9 @@ export class TodosController {
     @Res({ passthrough: true }) res: Response,
     @Request() req,
   ) {
-    await this.commandBus.execute(new CreateTodoCommand(req.user.id, createTodoDto));
+    await this.commandBus.execute(
+      new CreateTodoCommand(req.user.id, createTodoDto),
+    );
     res.status(HttpStatus.CREATED);
     return { message: 'TO-DO 등록 성공' };
   }
