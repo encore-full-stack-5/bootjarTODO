@@ -8,6 +8,7 @@ import { TodosModule } from './todos/todos.module';
 import { Todo } from './todos/entities/todos.entity';
 import { Category } from './todos/entities/category.entity';
 import { User } from './todos/entities/user.entity';
+import { Friend } from './todos/entities/friend.entity';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { User } from './todos/entities/user.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Todo, Category, User],
+      entities: [Todo, Category, User, Friend],
       synchronize: false,
     }),
     RedisModule.forRoot({
