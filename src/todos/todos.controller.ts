@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetTodosQuery } from './queries/impl/get-todos.query';
+import { GetMyTodosQuery } from './queries/impl/get-my-todos.query';
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { Response } from 'express';
 import { GetTodosDto } from './dto/get-todos.dto';
@@ -42,7 +42,7 @@ export class TodosController {
     @Request() req,
   ) {
     const todos: GetTodosDto[] = await this.queryBus.execute(
-      new GetTodosQuery(req.user.id, date),
+      new GetMyTodosQuery(req.user.id, date),
     );
     res.status(HttpStatus.OK);
     return { todos };
@@ -55,7 +55,7 @@ export class TodosController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const todos: GetTodosDto[] = await this.queryBus.execute(
-      new GetTodosQuery(friendId, date),
+      new GetMyTodosQuery(friendId, date),
     );
     res.status(HttpStatus.OK); // body를 리턴으로 안주고 .json()으로 던져주면 여러번 응답 요청이 왔을때 에러남
     return { todos };

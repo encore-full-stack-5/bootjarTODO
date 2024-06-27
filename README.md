@@ -15,11 +15,15 @@ src
 │   │       └── update-todo.command.ts
 │   ├── queries
 │   │   ├── handlers
-│   │   │   ├── get-todos.handler.ts
+│   │   │   ├── get-my-todos.handler.ts
+│   │   │   ├── get-friend-todos.handler.ts
+│   │   │   ├── get-user-todos.handler.ts
 │   │   │   ├── get-todo.handler.ts
 │   │   │   └── index.ts
 │   │   └── impl
-│   │       ├── get-todos.query.ts
+│   │       ├── get-my-todos.query.ts
+│   │       ├── get-friend-todos.query.ts
+│   │       ├── get-user-todos.query.ts
 │   │       └── get-todo.query.ts
 │   ├── events
 │   │   ├── handlers
