@@ -6,12 +6,18 @@ import { GetUserTodosQuery } from '../impl/get-user-todos.query';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { GetTodosDto } from '../../dto/get-todos.dto';
+import { Friend } from '../../entities/friend.entity';
+import { User } from '../../entities/user.entity';
 
 @QueryHandler(GetUserTodosQuery)
 export class GetUserTodosHandler implements IQueryHandler<GetUserTodosQuery> {
   constructor(
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
+    @InjectRepository(Friend)
+    private readonly friendRepository: Repository<Friend>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRedis()
     private readonly client: Redis,
   ) {}
