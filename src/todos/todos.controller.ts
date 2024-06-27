@@ -26,8 +26,12 @@ import { UpdateTodoDto } from './dto/update-todo.dto';
 import { DeleteTodoCommand } from './commands/impl/delete-todo.command';
 import { AuthGuard } from './auth/auth.guard';
 import { GetFriendTodosQuery } from './queries/impl/get-friend-todos.query';
-import { NotFriendExceptionFilter, UserNotFoundExceptionFilter } from "./error/execption.filter";
-import { GetUserTodosQuery } from "./queries/impl/get-user-todos.query";
+import {
+  NotFriendExceptionFilter,
+  PublicScopeExceptionFilter,
+  UserNotFoundExceptionFilter,
+} from './error/execption.filter';
+import { GetUserTodosQuery } from './queries/impl/get-user-todos.query';
 
 @Controller('todos')
 export class TodosController {
@@ -49,7 +53,7 @@ export class TodosController {
     res.status(HttpStatus.OK);
     return { todos };
   }
-  @UseFilters(new NotFriendExceptionFilter(), new UserNotFoundExceptionFilter)
+  @UseFilters(new NotFriendExceptionFilter(), new UserNotFoundExceptionFilter())
   @UseGuards(AuthGuard)
   @Get('/friends/:friendId')
   async findFriendTodos(
@@ -64,7 +68,10 @@ export class TodosController {
     res.status(HttpStatus.OK); // body를 리턴으로 안주고 .json()으로 던져주면 여러번 응답 요청이 왔을때 에러남
     return { todos };
   }
-  @UseFilters(new NotFriendExceptionFilter(), new UserNotFoundExceptionFilter())
+  @UseFilters(
+    new PublicScopeExceptionFilter(),
+    new UserNotFoundExceptionFilter(),
+  )
   @UseGuards(AuthGuard)
   @Get('/users/:userId')
   async findUserTodos(
