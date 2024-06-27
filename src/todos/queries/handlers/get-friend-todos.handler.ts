@@ -8,6 +8,8 @@ import Redis from 'ioredis';
 import { GetTodosDto } from '../../dto/get-todos.dto';
 import { Friend } from '../../entities/friend.entity';
 import { NotFriendError } from '../../error';
+import { User } from '../../entities/user.entity';
+import { UserNotFoundError } from '../../error/user-not-found.error';
 
 @QueryHandler(GetFriendTodosQuery)
 export class GetFriendTodosHandler
@@ -18,6 +20,8 @@ export class GetFriendTodosHandler
     private readonly todoRepository: Repository<Todo>,
     @InjectRepository(Friend)
     private readonly friendRepository: Repository<Friend>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
     @InjectRedis()
     private readonly client: Redis,
   ) {}
@@ -25,6 +29,12 @@ export class GetFriendTodosHandler
   async execute(query: GetFriendTodosQuery): Promise<GetTodosDto[]> {
     const { myId, friendId, date } = query;
 
+    const user = await this.userRepository.findOne({
+      where: { userId: friendId },
+    });
+    if (!user) {
+      throw new UserNotFoundError();
+    }
     const friend = await this.friendRepository.findOne({
       where: { user1Id: myId, user2Id: friendId },
     });

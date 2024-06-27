@@ -9,10 +9,11 @@ import { QueryHandlers } from './queries/handlers';
 import { EventHandlers } from './events/handlers';
 import { JwtModule } from '@nestjs/jwt';
 import { Friend } from './entities/friend.entity';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Todo, Friend]),
+    TypeOrmModule.forFeature([Todo, Friend, User]),
     RedisModule,
     CqrsModule,
     JwtModule.register({
