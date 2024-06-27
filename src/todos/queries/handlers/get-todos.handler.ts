@@ -31,18 +31,9 @@ export class GetTodosHandler implements IQueryHandler<GetTodosQuery> {
       .where('todo.user_id = :userId', { userId })
       .andWhere('todo.todo_date = :date', { date })
       .getMany();
-    const dtoList = todos.map((todo) => {
-      const dto = new GetTodosDto();
-      dto.todoId = todo.todoId;
-      dto.categoryId = todo.categoryId;
-      dto.todoTitle = todo.todoTitle;
-      dto.todoDate = date;
-      dto.todoDone = todo.todoDone;
-      return dto;
-    });
+    const dtoList = todos.map((todo) => GetTodosDto.from(todo, date));
 
     await this.client.set(redisKey, JSON.stringify(dtoList), 'EX', 3600); // 1시간 유지
     return dtoList;
-    // return this.todoRepository.find({ where: { userId } });
   }
 }

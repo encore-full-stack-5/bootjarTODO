@@ -9,6 +9,9 @@ export class User {
   @Column({ name: 'user_nickname', length: 255 })
   userNickname: string;
 
+  @Column({ name: 'user_public_scope' })
+  userPublicScope: boolean;
+
   @OneToMany(() => Todo, (todo) => todo.user, { onDelete: 'CASCADE' })
   todos: Todo[];
 }
