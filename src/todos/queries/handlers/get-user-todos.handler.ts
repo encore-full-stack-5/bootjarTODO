@@ -8,6 +8,8 @@ import Redis from 'ioredis';
 import { GetTodosDto } from '../../dto/get-todos.dto';
 import { Friend } from '../../entities/friend.entity';
 import { User } from '../../entities/user.entity';
+import { UserNotFoundError } from '../../error/user-not-found.error';
+import { PublicScopeError } from '../../error/public-scope.error';
 
 @QueryHandler(GetUserTodosQuery)
 export class GetUserTodosHandler implements IQueryHandler<GetUserTodosQuery> {
@@ -23,7 +25,21 @@ export class GetUserTodosHandler implements IQueryHandler<GetUserTodosQuery> {
   ) {}
 
   async execute(query: GetUserTodosQuery): Promise<GetTodosDto[]> {
-    const { userId, date } = query;
+    const { myId, userId, date } = query;
+
+    const user = await this.userRepository.findOne({ where: { userId: userId } });
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+    if (!user.userPublicScope) {
+      const friend = await this.friendRepository.findOne({
+        where: { user1Id: myId, user2Id: userId },
+      });
+      if (!friend) {
+        throw new PublicScopeError();
+      }
+    }
+
     const redisKey = `todos:${userId}:${date}`;
     const cachedTodos = await this.client.get(redisKey);
     if (cachedTodos) {
