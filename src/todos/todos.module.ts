@@ -10,6 +10,7 @@ import { EventHandlers } from './events/handlers';
 import { JwtModule } from '@nestjs/jwt';
 import { Friend } from './entities/friend.entity';
 import { User } from './entities/user.entity';
+import { RestController } from './rest.controller';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { User } from './entities/user.entity';
       secret: process.env.JWT_SECRET,
     }),
   ],
-  controllers: [TodosController],
+  controllers: [TodosController, RestController],
   providers: [...QueryHandlers, ...CommandHandlers, ...EventHandlers],
 })
 export class TodosModule {}
