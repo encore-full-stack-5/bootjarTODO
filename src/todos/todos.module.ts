@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TodosService } from './todos.service';
 import { TodosController } from './todos.controller';
 import { Todo } from './entities/todos.entity';
 import { RedisModule } from '@nestjs-modules/ioredis';
@@ -22,11 +21,6 @@ import { Friend } from './entities/friend.entity';
     }),
   ],
   controllers: [TodosController],
-  providers: [
-    TodosService,
-    ...QueryHandlers,
-    ...CommandHandlers,
-    ...EventHandlers,
-  ],
+  providers: [...QueryHandlers, ...CommandHandlers, ...EventHandlers],
 })
 export class TodosModule {}

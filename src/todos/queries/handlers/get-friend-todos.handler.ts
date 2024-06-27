@@ -6,6 +6,8 @@ import { GetFriendTodosQuery } from '../impl/get-friend-todos.query';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
 import { GetTodosDto } from '../../dto/get-todos.dto';
+import { Friend } from '../../entities/friend.entity';
+import { NotFriendError } from '../../error';
 
 @QueryHandler(GetFriendTodosQuery)
 export class GetFriendTodosHandler
@@ -14,12 +16,21 @@ export class GetFriendTodosHandler
   constructor(
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
+    @InjectRepository(Friend)
+    private readonly friendRepository: Repository<Friend>,
     @InjectRedis()
     private readonly client: Redis,
   ) {}
 
   async execute(query: GetFriendTodosQuery): Promise<GetTodosDto[]> {
     const { myId, friendId, date } = query;
+
+    const friend = await this.friendRepository.findOne({
+      where: { user1Id: myId, user2Id: friendId },
+    });
+    if (!friend) {
+      throw new NotFriendError();
+    }
     const redisKey = `todos:${friendId}:${date}`;
     const cachedTodos = await this.client.get(redisKey);
     if (cachedTodos) {
