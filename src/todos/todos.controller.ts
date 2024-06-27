@@ -1,4 +1,3 @@
-import { TodosService } from './todos.service';
 import {
   Body,
   Controller,
@@ -12,10 +11,11 @@ import {
   Res,
   UseGuards,
   Request,
+  UseFilters,
 } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { GetTodosQuery } from './queries/impl/get-todos.query';
+import { GetMyTodosQuery } from './queries/impl/get-my-todos.query';
 import { CreateTodoCommand } from './commands/impl/create-todo.command';
 import { Response } from 'express';
 import { GetTodosDto } from './dto/get-todos.dto';
@@ -25,11 +25,12 @@ import { UpdateTodoCommand } from './commands/impl/update-todo.command';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { DeleteTodoCommand } from './commands/impl/delete-todo.command';
 import { AuthGuard } from './auth/auth.guard';
+import { GetFriendTodosQuery } from './queries/impl/get-friend-todos.query';
+import { NotFriendExceptionFilter } from './error/execption.filter';
 
 @Controller('todos')
 export class TodosController {
   constructor(
-    private readonly todosService: TodosService,
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
@@ -42,20 +43,22 @@ export class TodosController {
     @Request() req,
   ) {
     const todos: GetTodosDto[] = await this.queryBus.execute(
-      new GetTodosQuery(req.user.id, date),
+      new GetMyTodosQuery(req.user.id, date),
     );
     res.status(HttpStatus.OK);
     return { todos };
   }
+  @UseFilters(new NotFriendExceptionFilter())
   @UseGuards(AuthGuard)
   @Get('/friends/:friendId')
   async findFriendTodos(
     @Param('friendId') friendId: number,
     @Query('query') date: string,
     @Res({ passthrough: true }) res: Response,
+    @Request() req,
   ) {
     const todos: GetTodosDto[] = await this.queryBus.execute(
-      new GetTodosQuery(friendId, date),
+      new GetFriendTodosQuery(req.user.id, friendId, date),
     );
     res.status(HttpStatus.OK); // body를 리턴으로 안주고 .json()으로 던져주면 여러번 응답 요청이 왔을때 에러남
     return { todos };
@@ -79,7 +82,9 @@ export class TodosController {
     @Res({ passthrough: true }) res: Response,
     @Request() req,
   ) {
-    await this.commandBus.execute(new CreateTodoCommand(req.user.id, createTodoDto));
+    await this.commandBus.execute(
+      new CreateTodoCommand(req.user.id, createTodoDto),
+    );
     res.status(HttpStatus.CREATED);
     return { message: 'TO-DO 등록 성공' };
   }
