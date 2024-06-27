@@ -22,7 +22,7 @@ import { RestController } from './rest.controller';
       secret: process.env.JWT_SECRET,
     }),
   ],
-  controllers: [TodosController, RestController],
+  controllers: [RestController, TodosController],
   providers: [...QueryHandlers, ...CommandHandlers, ...EventHandlers],
 })
 export class TodosModule {}
