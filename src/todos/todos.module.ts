@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { Friend } from './entities/friend.entity';
 import { User } from './entities/user.entity';
 import { RestController } from './rest.controller';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -20,6 +21,12 @@ import { RestController } from './rest.controller';
     JwtModule.register({
       global: true,
       secret: process.env.JWT_SECRET,
+    }),
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 5000,
+        maxRedirects: 5,
+      }),
     }),
   ],
   controllers: [RestController, TodosController],

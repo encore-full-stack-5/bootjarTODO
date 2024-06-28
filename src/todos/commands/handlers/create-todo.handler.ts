@@ -5,6 +5,8 @@ import { Todo } from '../../entities/todos.entity';
 import { CreateTodoCommand } from '../impl/create-todo.command';
 import { DropTodosEvent } from '../../events/impl/drop-todos.event';
 import { CreateTodoDto } from '../../dto/create-todo.dto';
+import { HttpService } from '@nestjs/axios';
+import { Logger } from '@nestjs/common';
 
 @CommandHandler(CreateTodoCommand)
 export class CreateTodoHandler implements ICommandHandler<CreateTodoCommand> {
@@ -12,7 +14,9 @@ export class CreateTodoHandler implements ICommandHandler<CreateTodoCommand> {
     @InjectRepository(Todo)
     private readonly todoRepository: Repository<Todo>,
     private readonly eventBus: EventBus,
+    private readonly httpService: HttpService,
   ) {}
+  private readonly logger = new Logger(CreateTodoHandler.name);
 
   async execute(command: CreateTodoCommand): Promise<Todo> {
     const { userId, createTodoDto } = command;
@@ -20,6 +24,12 @@ export class CreateTodoHandler implements ICommandHandler<CreateTodoCommand> {
 
     const result = await this.todoRepository.save(todo);
     this.eventBus.publish(new DropTodosEvent(userId, createTodoDto.todoDate));
+    this.httpService.axiosRef.post(
+      'http://34.31.174.33/todos/comments/todo-add',
+      {
+        todoId: result.todoId,
+      },
+    );
 
     return result;
   }
