@@ -32,6 +32,7 @@ import {
   UserNotFoundExceptionFilter,
 } from './error/execption.filter';
 import { GetUserTodosQuery } from './queries/impl/get-user-todos.query';
+import { QueryRequired } from "./decorator/query-required";
 
 @Controller('todos')
 export class TodosController {
@@ -43,7 +44,7 @@ export class TodosController {
   @UseGuards(AuthGuard)
   @Get('me')
   async findMyTodos(
-    @Query('query') date: string,
+    @QueryRequired('query') date: string,
     @Res({ passthrough: true }) res: Response,
     @Request() req,
   ) {
@@ -58,7 +59,7 @@ export class TodosController {
   @Get('/friends/:friendId')
   async findFriendTodos(
     @Param('friendId') friendId: number,
-    @Query('query') date: string,
+    @QueryRequired('query') date: string,
     @Res({ passthrough: true }) res: Response,
     @Request() req,
   ) {
@@ -76,7 +77,7 @@ export class TodosController {
   @Get('/users/:userId')
   async findUserTodos(
     @Param('userId') userId: number,
-    @Query('query') date: string,
+    @QueryRequired('query') date: string,
     @Res({ passthrough: true }) res: Response,
     @Request() req,
   ) {
