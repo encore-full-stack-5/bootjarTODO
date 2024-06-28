@@ -24,7 +24,7 @@ export class DeleteTodoHandler implements ICommandHandler<DeleteTodoCommand> {
     await this.todoRepository.delete(todoId);
     this.eventBus.publish(new DropTodosEvent(todo.userId, date));
     this.eventBus.publish(new DropTodoEvent(todo.todoId));
-    this.httpService.delete(
+    this.httpService.axiosRef.delete(
       `http://34.31.174.33/todos/comments/todo-delete/${todoId}`,
     );
   }

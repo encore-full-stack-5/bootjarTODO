@@ -22,7 +22,12 @@ import { HttpModule } from '@nestjs/axios';
       global: true,
       secret: process.env.JWT_SECRET,
     }),
-    HttpModule,
+    HttpModule.registerAsync({
+      useFactory: () => ({
+        timeout: 5000,
+        maxRedirects: 5,
+      }),
+    }),
   ],
   controllers: [RestController, TodosController],
   providers: [...QueryHandlers, ...CommandHandlers, ...EventHandlers],
