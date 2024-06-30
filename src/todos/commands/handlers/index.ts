@@ -6,6 +6,7 @@ import { UpdateUserHandler } from './update-user.handler';
 import { DeleteUserHandler } from './delete-user.handler';
 import { FriendAcceptHandler } from './friend-accept.handler';
 import { FriendDeleteHandler } from './friend-delete.handler';
+import { CheckTodoHandler } from "./check-todo.handler";
 
 export const CommandHandlers = [
   CreateTodoHandler,
@@ -16,4 +17,5 @@ export const CommandHandlers = [
   DeleteUserHandler,
   FriendAcceptHandler,
   FriendDeleteHandler,
+  CheckTodoHandler,
 ];
