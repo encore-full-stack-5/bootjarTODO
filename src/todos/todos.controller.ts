@@ -28,11 +28,11 @@ import { AuthGuard } from './auth/auth.guard';
 import { GetFriendTodosQuery } from './queries/impl/get-friend-todos.query';
 import {
   NotFriendExceptionFilter,
-  PublicScopeExceptionFilter,
-  UserNotFoundExceptionFilter,
-} from './error/execption.filter';
+  PublicScopeExceptionFilter, TodoPermissonExceptionFilter,
+  UserNotFoundExceptionFilter
+} from "./error/execption.filter";
 import { GetUserTodosQuery } from './queries/impl/get-user-todos.query';
-import { QueryRequired } from "./decorator/query-required";
+import { QueryRequired } from './decorator/query-required';
 
 @Controller('todos')
 export class TodosController {
@@ -132,5 +132,15 @@ export class TodosController {
     await this.commandBus.execute(new DeleteTodoCommand(todoId));
     res.status(HttpStatus.OK);
     return { message: 'TO-DO 삭제 성공' };
+  }
+  @UseFilters(new TodoPermissonExceptionFilter())
+  @UseGuards(AuthGuard)
+  @Put('/:todoId/check')
+  async check(
+    @Param('todoId') todoId: number,
+    @Res({ passthrough: true }) res: Response,
+    @Request() req,
+  ) {
+
   }
 }
