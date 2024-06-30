@@ -3,6 +3,7 @@ import { UpdateTodoDto } from '../../dto/update-todo.dto';
 
 export class UpdateTodoCommand implements ICommand {
   constructor(
+    public readonly userId: number,
     public readonly todoId: number,
     public readonly updateTodoDto: UpdateTodoDto,
   ) {}

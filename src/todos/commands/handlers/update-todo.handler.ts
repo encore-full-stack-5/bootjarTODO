@@ -5,6 +5,7 @@ import { Todo } from '../../entities/todos.entity';
 import { DropTodosEvent } from '../../events/impl/drop-todos.event';
 import { UpdateTodoCommand } from '../impl/update-todo.command';
 import { DropTodoEvent } from '../../events/impl/drop-todo.event';
+import { TodoPermissonError } from '../../error/todo-permisson.error';
 
 @CommandHandler(UpdateTodoCommand)
 export class UpdateTodoHandler implements ICommandHandler<UpdateTodoCommand> {
@@ -15,8 +16,11 @@ export class UpdateTodoHandler implements ICommandHandler<UpdateTodoCommand> {
   ) {}
 
   async execute(command: UpdateTodoCommand): Promise<Todo> {
-    const { todoId, updateTodoDto } = command;
+    const { userId, todoId, updateTodoDto } = command;
     const todo = await this.todoRepository.findOneBy({ todoId });
+    if (todo.userId !== userId) {
+      throw new TodoPermissonError();
+    }
     const beforeDate = todo.todoDate.toString();
 
     todo.categoryId = updateTodoDto.categoryId;

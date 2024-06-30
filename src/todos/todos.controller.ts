@@ -28,11 +28,13 @@ import { AuthGuard } from './auth/auth.guard';
 import { GetFriendTodosQuery } from './queries/impl/get-friend-todos.query';
 import {
   NotFriendExceptionFilter,
-  PublicScopeExceptionFilter, TodoPermissonExceptionFilter,
-  UserNotFoundExceptionFilter
-} from "./error/execption.filter";
+  PublicScopeExceptionFilter,
+  TodoPermissonExceptionFilter,
+  UserNotFoundExceptionFilter,
+} from './error/execption.filter';
 import { GetUserTodosQuery } from './queries/impl/get-user-todos.query';
 import { QueryRequired } from './decorator/query-required';
+import { CheckTodoCommand } from './commands/impl/check-todo.command';
 
 @Controller('todos')
 export class TodosController {
@@ -112,24 +114,30 @@ export class TodosController {
     res.status(HttpStatus.CREATED);
     return { message: 'TO-DO 등록 성공' };
   }
+  @UseFilters(new TodoPermissonExceptionFilter())
   @UseGuards(AuthGuard)
   @Put('/:todoId')
   async update(
     @Param('todoId') todoId: number,
     @Body() updateTodoDto: UpdateTodoDto,
     @Res({ passthrough: true }) res: Response,
+    @Request() req,
   ) {
-    await this.commandBus.execute(new UpdateTodoCommand(todoId, updateTodoDto));
+    await this.commandBus.execute(
+      new UpdateTodoCommand(req.user.id, todoId, updateTodoDto),
+    );
     res.status(HttpStatus.OK);
     return { message: 'TO-DO 수정 성공' };
   }
+  @UseFilters(new TodoPermissonExceptionFilter())
   @UseGuards(AuthGuard)
   @Delete('/:todoId')
   async delete(
     @Param('todoId') todoId: number,
     @Res({ passthrough: true }) res: Response,
+    @Request() req,
   ) {
-    await this.commandBus.execute(new DeleteTodoCommand(todoId));
+    await this.commandBus.execute(new DeleteTodoCommand(req.user.id, todoId));
     res.status(HttpStatus.OK);
     return { message: 'TO-DO 삭제 성공' };
   }
@@ -141,6 +149,8 @@ export class TodosController {
     @Res({ passthrough: true }) res: Response,
     @Request() req,
   ) {
-
+    await this.commandBus.execute(new CheckTodoCommand(req.user.id, todoId));
+    res.status(HttpStatus.OK);
+    return { message: '수행여부 변경완료' };
   }
 }
